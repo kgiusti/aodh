@@ -15,11 +15,13 @@
 
 import oslo_messaging
 from oslo_messaging import serializer as oslo_serializer
+from oslo_log import log
 
 DEFAULT_URL = "__default__"
 TRANSPORTS = {}
 _SERIALIZER = oslo_serializer.JsonPayloadSerializer()
 
+LOG = log.getLogger(__name__)
 
 def setup():
     oslo_messaging.set_transport_defaults('aodh')
@@ -28,6 +30,14 @@ def setup():
 def get_transport(conf, url=None, optional=False, cache=True):
     """Initialise the oslo_messaging layer."""
     global TRANSPORTS, DEFAULT_URL
+    LOG.warning("KAG: get_transport(url=%s)", str(url))
+
+    try:
+        turl = oslo_messaging.TransportURL.parse(conf, url=url)
+        LOG.warning("KAG: turl=%s", str(turl))
+    except Exception as e:
+        LOG.warning("KAG: bad url %s", url or "NO URL PASSED")
+
     cache_key = url or DEFAULT_URL
     transport = TRANSPORTS.get(cache_key)
     if not transport or not cache:
@@ -43,6 +53,7 @@ def get_transport(conf, url=None, optional=False, cache=True):
         else:
             if cache:
                 TRANSPORTS[cache_key] = transport
+                LOG.warning("KAG: transports now: %s", str(TRANSPORTS))
     return transport
 
 
