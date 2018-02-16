@@ -16,6 +16,7 @@
 import oslo_messaging
 from oslo_messaging import serializer as oslo_serializer
 from oslo_log import log
+import traceback
 
 DEFAULT_URL = "__default__"
 TRANSPORTS = {}
@@ -30,7 +31,7 @@ def setup():
 def get_transport(conf, url=None, optional=False, cache=True):
     """Initialise the oslo_messaging layer."""
     global TRANSPORTS, DEFAULT_URL
-    LOG.warning("KAG: get_transport(url=%s)", str(url))
+    LOG.warning("KAG: aodh get_transport(url=%s)", str(url))
 
     try:
         turl = oslo_messaging.TransportURL.parse(conf, url=url)
@@ -48,7 +49,9 @@ def get_transport(conf, url=None, optional=False, cache=True):
     transport = TRANSPORTS.get(cache_key)
     if not transport or not cache:
         try:
+            LOG.warning("KAG: getting a notification transport")
             transport = oslo_messaging.get_notification_transport(conf, url)
+            LOG.warning("KAG traceback: %s", str(traceback.format_stack()))
         except (oslo_messaging.InvalidTransportURL,
                 oslo_messaging.DriverLoadFailure):
             if not optional or url:
