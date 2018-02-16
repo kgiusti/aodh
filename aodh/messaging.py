@@ -35,8 +35,14 @@ def get_transport(conf, url=None, optional=False, cache=True):
     try:
         turl = oslo_messaging.TransportURL.parse(conf, url=url)
         LOG.warning("KAG: turl=%s", str(turl))
-    except Exception as e:
+        url = str(turl)
+    except oslo_messaging.InvalidTransportURL:
         LOG.warning("KAG: bad url %s", url or "NO URL PASSED")
+        if not optional or url:
+            # required yet URL is invalid
+            raise
+        LOG.warning("KAG: Invalid URL")
+        return None
 
     cache_key = url or DEFAULT_URL
     transport = TRANSPORTS.get(cache_key)
@@ -48,7 +54,9 @@ def get_transport(conf, url=None, optional=False, cache=True):
             if not optional or url:
                 # NOTE(sileht): oslo_messaging is configured but unloadable
                 # so reraise the exception
+                LOG.warning("KAG: 1 WTF??? %s", str(url))
                 raise
+            LOG.warning("KAG: 2 WTF??? %s", str(url))
             return None
         else:
             if cache:
