@@ -45,6 +45,7 @@ class EventAlarmEndpoint(object):
         self.evaluator = evaluator
 
     def sample(self, notifications):
+        LOG.warning("KAG: EventAlarmEndpoint sample received %s", str(notifications))
         LOG.debug('Received %s messages in batch.', len(notifications))
         for notification in notifications:
             self.evaluator.evaluate_events(notification['payload'])
@@ -63,8 +64,11 @@ class EventAlarmEvaluationService(cotyledon.Service):
             [EventAlarmEndpoint(self.evaluator)], False,
             self.conf.listener.batch_size,
             self.conf.listener.batch_timeout)
+        LOG.warning("KAG: EventAlarmEvaluationService started topic=%s",
+                    str(oslo_messaging.Target(topic=self.conf.listener.event_alarm_topic)))
         self.listener.start()
 
     def terminate(self):
         self.listener.stop()
         self.listener.wait()
+        LOG.warning("KAG: EventAlarmEvaluationService stopped")

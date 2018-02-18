@@ -496,9 +496,11 @@ def _send_notification(event, payload):
     notification = "alarm.%s" % notification
     transport = messaging.get_transport(pecan.request.cfg)
     notifier = messaging.get_notifier(transport, publisher_id="aodh.api")
+    LOG.warning("KAG: pecan notifier created")
     # FIXME(sileht): perhaps we need to copy some infos from the
     # pecan request headers like nova does
     notifier.info({}, notification, payload)
+    LOG.warning("KAG: pecan notifier info sent")
 
 
 def stringify_timestamps(data):
