@@ -36,8 +36,10 @@ class AlarmNotifier(object):
             driver='messagingv2',
             publisher_id="alarming.evaluator",
             topics=[conf.notifier_topic])
+        LOG.warning("KAG: AlarmNotifier topic = %s", str(conf.notifier_topic))
 
     def notify(self, alarm, previous, reason, reason_data):
+        LOG.warning("KAG: AlarmNotifier notifying alarm %s", str(alarm.alarm_id))
         actions = getattr(alarm, models.Alarm.ALARM_ACTIONS_MAP[alarm.state])
         if not actions:
             LOG.debug('alarm %(alarm_id)s has no action configured '
@@ -56,3 +58,4 @@ class AlarmNotifier(object):
                    'reason': six.text_type(reason),
                    'reason_data': reason_data}
         self.notifier.sample({}, 'alarm.update', payload)
+        LOG.warning("KAG: AlarmNotifier alarm sent %s", str(alarm.alarm_id))

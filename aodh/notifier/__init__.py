@@ -81,10 +81,12 @@ class AlarmNotifierService(cotyledon.Service):
             transport, [target], [AlarmEndpoint(self.notifiers)], False,
             self.conf.notifier.batch_size, self.conf.notifier.batch_timeout)
         self.listener.start()
+        LOG.warning("KAG: AlarmNotifierService STARTED batch notification listener target=%s", str(target))
 
     def terminate(self):
         self.listener.stop()
         self.listener.wait()
+        LOG.warning("KAG: AlarmNotifierService STOPPED")
 
 
 class AlarmEndpoint(object):
@@ -114,6 +116,7 @@ class AlarmEndpoint(object):
         :param reason_data: A dict representation of the reason.
         """
 
+        LOG.warning("KAG: _handle_action")
         try:
             action = netutils.urlsplit(action)
         except Exception:
@@ -142,6 +145,7 @@ class AlarmEndpoint(object):
 
     @staticmethod
     def _process_alarm(notifiers, data):
+        LOG.warning("KAG: process_alarm")
         """Notify that alarm has been triggered.
 
         :param notifiers: list of possible notifiers

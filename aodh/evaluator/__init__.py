@@ -83,6 +83,7 @@ class Evaluator(object):
             transport = messaging.get_transport(self.conf)
             self._alarm_change_notifier = messaging.get_notifier(
                 transport, publisher_id="aodh.evaluator")
+            LOG.warning("KAG: alarm change notifier created")
         return self._alarm_change_notifier
 
     def _record_change(self, alarm, reason):
@@ -110,6 +111,7 @@ class Evaluator(object):
         notification = "alarm.state_transition"
         self.alarm_change_notifier.info({},
                                         notification, payload)
+        LOG.warning("KAG: alarm.state_transition fired off")
 
     def _refresh(self, alarm, state, reason, reason_data, always_record=False):
         """Refresh alarm state."""
