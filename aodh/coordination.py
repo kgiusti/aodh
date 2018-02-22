@@ -112,6 +112,7 @@ class PartitionCoordinator(object):
     def __init__(self, conf, my_id=None):
         self.conf = conf
         self.backend_url = self.conf.coordination.backend_url
+        LOG.error("KAG: backend_url=%s", str(self.backend_url))
         self._coordinator = None
         self._groups = set()
         self._my_id = my_id or uuidutils.generate_uuid()
