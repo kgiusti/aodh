@@ -60,6 +60,8 @@ class GnocchiBase(threshold.ThresholdEvaluator):
 class GnocchiResourceThresholdEvaluator(GnocchiBase):
     def _statistics(self, rule, start, end):
         try:
+            LOG.warning("KAG: metric.get_measures metric=%s resource_id=%s",
+                        rule['metric'], rule['resource_id'])
             return self._gnocchi_client.metric.get_measures(
                 metric=rule['metric'],
                 granularity=rule['granularity'],
@@ -101,6 +103,8 @@ class GnocchiAggregationMetricsThresholdEvaluator(GnocchiBase):
             # So temporary set 'needed_overlap' to 0 to disable the
             # gnocchi checks about missing points. For more detail see:
             #   https://bugs.launchpad.net/gnocchi/+bug/1479429
+            LOG.warning("KAG: metric.aggregation metrics=%s",
+                        str(rule['metrics']))
             return self._gnocchi_client.metric.aggregation(
                 metrics=rule['metrics'],
                 granularity=rule['granularity'],
@@ -137,6 +141,8 @@ class GnocchiAggregationResourcesThresholdEvaluator(GnocchiBase):
         # gnocchi checks about missing points. For more detail see:
         #   https://bugs.launchpad.net/gnocchi/+bug/1479429
         try:
+            LOG.warning("KAG: metric.aggregation metric=%s resource_type=%s query=%s",
+                        rule['metric'], rule['resource_type'], rule['query'])
             return self._gnocchi_client.metric.aggregation(
                 metrics=rule['metric'],
                 granularity=rule['granularity'],

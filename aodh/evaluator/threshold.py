@@ -103,7 +103,9 @@ class ThresholdEvaluator(evaluator.Evaluator):
         :returns: state, trending state and statistics.
         """
         start, end = self._bound_duration(alarm_rule)
+        LOG.warning("KAG: getting statistics...")
         statistics = self._statistics(alarm_rule, start, end)
+        LOG.warning("KAG: ... returned statistics %s", str(statistics))
         statistics = self._sanitize(alarm_rule, statistics)
         sufficient = len(statistics) >= alarm_rule['evaluation_periods']
         if not sufficient:
